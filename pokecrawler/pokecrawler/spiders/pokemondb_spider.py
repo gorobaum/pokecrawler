@@ -18,7 +18,7 @@ class PokemonDBSpider(BaseSpider):
 
     	next_page = "http://pokemondb.net" + sel.xpath("body/article/nav[1]/a[@class='entity-nav-next']/@href")[0].extract()
         if not not next_page:
-            yield Request(next_page[0], self.parse)
+            yield Request(next_page, self.parse)
 
     	pokemon['name'] = sel.xpath('//h1/text()')[0].extract()
 
