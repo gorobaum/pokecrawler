@@ -1,11 +1,11 @@
 from scrapy.spider import BaseSpider
 from scrapy.selector import HtmlXPathSelector
-from scrapy.spider import Spider
+from scrapy.http.request import Request
 from scrapy.selector import Selector
 
 from pokecrawler.items import PokecrawlerItem
 
-class PokemonDBSpider(Spider):
+class PokemonDBSpider(BaseSpider):
     name = "pokemondb"
     allowed_domains = ["pokemondb.net"]
     start_urls = [
@@ -14,11 +14,15 @@ class PokemonDBSpider(Spider):
 
     def parse(self, response):
     	pokemon = PokecrawlerItem()
-    	hxs = HtmlXPathSelector(response)
+    	sel = Selector(response)
 
-    	pokemon['name'] = hxs.select('//h1/text()')[0].extract()
+    	next_page = "http://pokemondb.net" + sel.xpath("body/article/nav[1]/a[@class='entity-nav-next']/@href")[0].extract()
+        if not not next_page:
+            yield Request(next_page[0], self.parse)
 
-    	types = hxs.select('//tr[th/text() = "Type"]/td/a/text()').extract()
+    	pokemon['name'] = sel.xpath('//h1/text()')[0].extract()
+
+    	types = sel.xpath('//tr[th/text() = "Type"]/td/a/text()').extract()
     	if len(types) > 1:
     		pokemon['type1'] = types[0]
     		pokemon['type2'] = types[1]
@@ -26,11 +30,10 @@ class PokemonDBSpider(Spider):
     		pokemon['type1'] = types[0]
     		pokemon['type2'] = "None"
 
-    	pokemon['hp'] = hxs.select('//tr[th/text() = "HP"]/td/text()')[0].extract()
-    	pokemon['attack'] = hxs.select('//tr[th/text() = "Attack"]/td/text()')[0].extract()
-    	pokemon['defense'] = hxs.select('//tr[th/text() = "Defense"]/td/text()')[0].extract()
-    	pokemon['spAttack'] = hxs.select('//tr[th/text() = "Sp. Atk"]/td/text()')[0].extract()
-    	pokemon['spDefense'] = hxs.select('//tr[th/text() = "Sp. Def"]/td/text()')[0].extract()
-    	pokemon['speed'] = hxs.select('//tr[th/text() = "Speed"]/td/text()')[0].extract()
-    	pokemon['total'] = hxs.select('//tr[th/text() = "Total"]/td/b/text()')[0].extract()
-    	return pokemon
+    	pokemon['hp'] = sel.xpath('//tr[th/text() = "HP"]/td/text()')[0].extract()
+    	pokemon['attack'] = sel.xpath('//tr[th/text() = "Attack"]/td/text()')[0].extract()
+    	pokemon['defense'] = sel.xpath('//tr[th/text() = "Defense"]/td/text()')[0].extract()
+    	pokemon['spAttack'] = sel.xpath('//tr[th/text() = "Sp. Atk"]/td/text()')[0].extract()
+    	pokemon['spDefense'] = sel.xpath('//tr[th/text() = "Sp. Def"]/td/text()')[0].extract()
+    	pokemon['speed'] = sel.xpath('//tr[th/text() = "Speed"]/td/text()')[0].extract()
+    	pokemon['total'] = sel.xpath('//tr[th/text() = "Total"]/td/b/text()')[0].extract()
