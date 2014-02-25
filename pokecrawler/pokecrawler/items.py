@@ -7,7 +7,8 @@ from scrapy.item import Item, Field
 
 class PokecrawlerItem(Item):
     name = Field()
-    pokeType = Field()
+    type1 = Field()
+    type2 = Field()
     hp = Field()
     attack = Field()
     defense = Field()
