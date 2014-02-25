@@ -6,6 +6,13 @@
 from scrapy.item import Item, Field
 
 class PokecrawlerItem(Item):
-    # define the fields for your item here like:
-    # name = Field()
+    name = Field()
+    pokeType = Field()
+    hp = Field()
+    attack = Field()
+    defense = Field()
+    spAttack = Field()
+    spDefense = Field()
+    speed = Field()
+    total = Field()
     pass
