@@ -10,6 +10,9 @@ BOT_NAME = 'pokecrawler'
 
 SPIDER_MODULES = ['pokecrawler.spiders']
 NEWSPIDER_MODULE = 'pokecrawler.spiders'
+ITEM_PIPELINES = {
+    'pokecrawler.pipelines.PokecrawlerPipeline': 100,
+}
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'pokecrawler (+http://www.yourdomain.com)'
